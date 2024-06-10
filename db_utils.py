@@ -18,6 +18,13 @@ def save_to_csv(loan_dataframe):
 
     loan_dataframe.to_csv('loan_payments.csv', index=False)
 
+def csv_to_dataframe(csv_file = ''):
+    
+    ''' This function reads a csv file and returns a pandas dataframe'''
+
+    data = pd.read_csv(csv_file)
+
+    return data
 
 
 
@@ -55,3 +62,11 @@ class RDSDatabaseConnector():
         )
         return data
 
+# run script to retrieve database and write it to a local csv file
+if __name__ == "__main__":
+    
+    creds = get_credentials('credentials.yaml')
+
+    data = RDSDatabaseConnector(creds).get_loan_data()
+    
+    save_to_csv(data)
