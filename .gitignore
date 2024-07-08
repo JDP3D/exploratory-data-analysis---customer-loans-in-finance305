@@ -2,4 +2,8 @@ credentials.yaml
 loan_payments.csv
 cleaned_loan_data.csv
 transformed_loan_data.csv
+<<<<<<< HEAD
 */__pycache__
+=======
+__pycache__
+>>>>>>> 1eecc93 (added modified .gitignore)
