@@ -35,7 +35,7 @@ def save_to_csv(loan_dataframe: pd.DataFrame) -> None:
 
     loan_dataframe.to_csv('loan_payments.csv', index=False)
 
-def csv_to_dataframe(csv_file: str) -> pd.DataFrame:
+def csv_to_dataframe(csv_file: str, parsedates=[]) -> pd.DataFrame:
     
     ''' 
         This function reads a csv file and returns a pandas dataframe
@@ -47,7 +47,7 @@ def csv_to_dataframe(csv_file: str) -> pd.DataFrame:
             pd.DataFrame
     '''
 
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(csv_file, parse_dates=parsedates)
 
     return data
 
