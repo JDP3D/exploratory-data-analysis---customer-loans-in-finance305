@@ -1,5 +1,2 @@
 credentials.yaml
-loan_payments.csv
-cleaned_loan_data.csv
-transformed_loan_data.csv
 __pycache__

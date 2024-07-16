@@ -4,9 +4,10 @@ import pandas as pd
 
 class DataFrameTransform:
     
-    def drop_columns(self, dataframe, column):    
+    def drop_columns(self, dataframe: pd.DataFrame, column: str | list[str]) -> pd.DataFrame:    
         '''
-        This method drops the specified columns from a dataframe
+        This method drops the specified column/s from a dataframe.
+        Does not do this in place.
 
         Parameters:
             dataframe: The dataframe to which this method will be applied.
@@ -17,15 +18,20 @@ class DataFrameTransform:
         '''
         return dataframe.drop(axis=1, columns=column)
     
-    def drop_nulls(self, dataframe, how='any',columns=None): 
-        ''' This method drops rows with nulls depending on the given criteria
+    def drop_nulls(self, dataframe, columns, how='any' ): 
+        ''' 
+        This method drops rows with nulls. Does not do this in place.
 
         Parameters:
             dataframe: The dataframe to which this method will be applied.
-            column: The name(s) of columns that nulls will be dropped from
+            column: The name(s) of columns that nulls will be dropped from. If
+            not specified all columns will be taken into account.
+            how: If set to 'all' column will only be dropped if all values in
+            the column are nulls. If set to 'any', column will be dropped if any
+            value in the column is null. Deafault is 'any'.
 
         Returns:
-            dataFrame: The updated dataframe.
+            dataFrame: The dataframe with dropped rows.
         
         '''
         df_shape = dataframe.shape
@@ -34,16 +40,18 @@ class DataFrameTransform:
         print(f'{no_rows_removed} rows have been removed from the dataframe.')
         return new_df
     
-    def drop_nulls_threshold(self, dataframe, thresh):
-        ''' This method drops columns with nulls depending on the threshold 
-        given as a percentage of nulls
+    def drop_nulls_threshold(self, dataframe: pd.DataFrame, thresh: float) -> pd.DataFrame:
+        ''' 
+        This method drops columns with nulls depending on the threshold 
+        given as a percentage of nulls.
 
         Parameters:
             dataframe: The dataframe to which this method will be applied.
-            threshold: The percentage of nulls over (inclusive) which the columns will be dropped.
+            threshold: The percentage of nulls over (inclusive) which the columns will be dropped
+            given as a float.
 
         Returns:
-            dataFrame: The updated dataframe.  
+            dataFrame: The dataframe with rows dropped.  
 
         '''
         threshold = int((1-thresh)*len(dataframe)) + 1
@@ -53,8 +61,9 @@ class DataFrameTransform:
         print(f'{no_columns_removed} columns have been removed from the dataframe.')
         return new_df
     
-    def fill_nulls(self, dataframe, columns, value):
-        '''This method fills the nulls of  specied columns with the given value.
+    def fill_nulls(self, dataframe: pd.DataFrame, columns: str | list[str], value) -> pd.Series | pd.DataFrame:
+        '''
+        This method fills the nulls of  specied columns with the given value.
 
         Parameters:
             dataframe: The dataframe to which this method will be applied.
@@ -62,62 +71,78 @@ class DataFrameTransform:
             value: The value that the null will be replaced with
 
         Returns:
-            dataFrame: The updated dataframe.
+            dataFrame or series: A series if one column given else a dataframe. Does not 
+            do this in place.
         
         '''
 
         return dataframe[columns].fillna(value)
 
-    def impute_mean(self, dataframe, columns):
-        '''This method fills null values with the mean value of a column
+    def impute_mean(self, dataframe: pd.DataFrame, columns: str | list[str]) -> pd.Series | pd.DataFrame:
+        '''
+        This method fills null values in a column with the mean of the values of the column.
         
         Parameters:
             dataframe: The dataframe to which this method will be applied.
             column: The name(s) of columns that will be imputed
 
         Returns:
-            dataFrame: The updated dataframe.
+             dataFrame or series: A series if one column given else a dataframe. Does not 
+            do this in place.
         
         '''
         return dataframe[columns].fillna(dataframe[columns].mean(numeric_only = True))
 
-    def impute_median(self, dataframe, columns):
-        '''This method fills null values with the mean value of a column'
+    def impute_median(self, dataframe: pd.DataFrame, columns: str | list[str]) -> pd.Series | pd.DataFrame:
+        '''
+        This method fills null values of a column with the mean value of the column
         
          Parameters:
             dataframe: The dataframe to which this method will be applied.
-            column: The name(s) of columns that will be imputed
+            column: The name/s of column/s that will be imputed.
 
         Returns:
-            dataFrame: The updated dataframe.
+            dataFrame or series: A series if one column given else a dataframe. Does not 
+            do this in place.
         
         '''
         return dataframe[columns].fillna(dataframe[columns].median(numeric_only = True))
     
-    def impute_mode(self, dataframe, columns):
-        '''This method fills null values with the mode value of a column'''
-
-        return dataframe[columns].fillna(dataframe[columns].mode()[0])
-    
-    
-    def log_transform(self, dataframe, column):
-        '''This method tranforms data using a log transformation.
+    def impute_mode(self, dataframe: pd.DataFrame, column: str) -> pd.Series:
+        '''
+        This method fills null values with the mode value of a column
         
         Parameters:
             dataframe: The dataframe to which this method will be applied.
-            column: The name of the column that will be transformed
+            column: The name of  the column that will be imputed.
 
         Returns:
-            dataFrame: The updated dataframe.
+            series: A series containg the updated column.
+        
+        '''
+
+        return dataframe[column].fillna(dataframe[column].mode()[0])
+    
+    
+    def log_transform(self, dataframe: pd.DataFrame, column: str | list[str]) -> pd.Series | pd.DataFrame:
+
+        '''
+        This method tranforms data using a log transformation.
+        
+        Parameters:
+            dataframe: The dataframe to which this method will be applied.
+            column/s: The name/s of the column/s that will be transformed
+
+        Returns:
+            dataFrame or series: A series if one column given else a dataframe.
         
         '''
         return dataframe[column].map(lambda i: np.log(i) if i > 0 else 0)
     
 
-    def box_cox_transform(self, dataframe, column):
-
+    def box_cox_transform(self, dataframe: pd.DataFrame, column: str) -> pd.Series:
         '''
-        This method tranforms data using a Box-Cox transformation.
+        This method transforms data using a Box-Cox transformation.
 
         Parameters:
             dataframe: The dataframe to which this method will be applied.
@@ -130,7 +155,7 @@ class DataFrameTransform:
         boxcox = pd.Series(boxcox[0])
         return boxcox
     
-    def yeo_johnson_transform(self, dataframe, column):
+    def yeo_johnson_transform(self, dataframe: pd.DataFrame, column: str) -> pd.Series:
 
         '''
         This method tranforms data using a Yeo-Johnson transformation.
@@ -160,7 +185,7 @@ class DataFrameTransform:
         print(f'Original skew: {round(original_skew, 2)}')
 
         log = self.log_transform(dataframe, column)
-        log_skew = round(log.skew(), 2)
+        log_skew = round(log.skew(), 2) #type: ignore
         print(f'Skew after log transform: {log_skew}')
 
         if dataframe[column].min() <= 0:
@@ -174,8 +199,9 @@ class DataFrameTransform:
         yeo_skew = round(yeo.skew(), 2) #type: ignore
         print(f'Skew after Yeo-Johnson transform: {yeo_skew}')
 
-    def drop_outliers_zscore(self, dataframe, column, threshold):
-        '''This method drops rows from a dataframe depending on the z-score of
+    def drop_outliers_zscore(self, dataframe: pd.DataFrame, column: str, threshold: float) -> pd.DataFrame:
+        '''
+        This method drops rows from a dataframe depending on the z-score of
         a given column
         
         Parameters:
@@ -185,31 +211,42 @@ class DataFrameTransform:
 
         Returns: The updated dataframe 
         '''
-        zscores = stats.zscore(dataframe[column])
-        return dataframe[abs(zscores) <= threshold]
+        mean = dataframe[column].mean()
+        std = dataframe[column].std()
+        zscores = np.abs(dataframe[column] - mean) / std
+        return dataframe[zscores <= threshold]
     
-    def zscore_test(self, dataframe, column, threshold):
-        '''this method tests for zscores within a given threshold and
-          returns them as a pandas series 
+    def zscore_test(self, dataframe: pd.DataFrame, column: str | list[str], threshold):
+        '''
+        This method tests for zscores within a given threshold and
+        returns them as a pandas series of the results.
           
           Parameters:
             dataframe: The dataframe to which this method will be applied.
             column: The name of the column that will be tested.
             threshold: the z-score threshold.
 
-          Returns: A series containg the z-scores     
+          Returns: If one columngiven then returns a series, returns a dataframe 
+          containing the z-scores otherwise
           '''
-        zscores = stats.zscore(dataframe[column])
-        return zscores[abs(zscores)>threshold]
+        # zscores = stats.zscore(dataframe[column])
+        # return zscores[abs(zscores)>threshold]
+
+        mean = dataframe[column].mean()
+        std = dataframe[column].std()
+        zscores = (dataframe[column] - mean) / std
+        return zscores[abs(zscores) > threshold]
     
-    def iqr_outlier_test(self, dataframe, column):
+    def iqr_outlier_test(self, dataframe: pd.DataFrame, column: str | list[str]) -> pd.Series | pd.DataFrame:
         '''This method returns the outliers of a column using the standard IQR test (1.5 times).
         
         Parameters:
             dataframe: The dataframe to which this method will be applied.
-            column: The name of the column that will be tested.
+            column: The name/s of the column/s that will be tested.
 
-          Returns: prints out the values of the outliers in a column 
+          Returns: 
+            If one column given then returns a series, returns a dataframe 
+            containing the outlier values otherwise.
         
         '''
         values = dataframe[column]

@@ -1,15 +1,17 @@
-import missingno as msno
-import seaborn as sns
-import pandas as pd
+from scipy import stats
 from statsmodels.graphics.gofplots import qqplot
 import matplotlib.pyplot as plt
+import missingno as msno
 import numpy as np
-from scipy import stats
-from collections import Counter
+import pandas as pd
+import seaborn as sns
+
+# Class for plotting visualisations in the project
+# Did not have time to do type annotation on all methods
 
 class Plotter:
 
-    def plot_missingno(self, dataframe):
+    def plot_missingno(self, dataframe: pd.DataFrame) -> None:
         '''This method produces a missingno plot
         
         Parameters:
@@ -21,13 +23,14 @@ class Plotter:
         '''
         msno.matrix(dataframe)
     
-    def plot_missingno_heatmap(self, dataframe):
+    def plot_missingno_heatmap(self, dataframe: pd.DataFrame) -> None:
         msno.heatmap(dataframe)
     
-    def histogram_grid(self, dataframe, font_scale=0.7, data=None, columns=3):
-        '''This method plots a grid of histograms
+    def histogram_grid(self, dataframe: pd.DataFrame,  data=None, font_scale: float=0.7,columns: int=3):
+        '''
+        This method plots a grid of histograms
 
-        Parameters:
+        Parameters: 
             dataframe: The required dataframe for the plot.
             font_scale: The font size.
             data: The required columns of the dataframe.
@@ -42,13 +45,15 @@ class Plotter:
         g = sns.FacetGrid(f, col="variable",  col_wrap=columns, sharex=False, sharey=False)
         g = g.map(sns.histplot, "value", kde=True)
     
-    def boxplot_grid(self, dataframe, font_scale=0.7, data=None, columns=3):
-        '''This method plots a grid of box plots
+    def boxplot_grid(self, dataframe: pd.DataFrame, data=None, font_scale: float=0.7,  
+                     columns: int=3) -> None:
+        '''
+        This method plots a grid of box plots
         
          Parameters:
             dataframe: The required dataframe for the plot.
             font_scale: The font size.
-            data: The required columns of the dataframe.
+            data: Columns to unpivot.
             columns: The number of plots on the horizontal axis.
 
         Returns:
@@ -60,7 +65,8 @@ class Plotter:
         g = sns.FacetGrid(f, col="variable",  col_wrap=columns, sharex=False, sharey=False)
         g = g.map(sns.boxplot, "value", order=None)
 
-    def plot_histogram(self, dataframe, column, kd=True, plot_title='', fig_size=(10,5), font_size=10):
+    def plot_histogram(self, dataframe, column: str, kd: bool=True, plot_title='',
+                       fig_size: tuple[float, float]=(10,5), font_size: float=10):
         '''
         This method plots a histogram of the given data
         
@@ -277,9 +283,11 @@ class Plotter:
 
         plt.show()
 
-    def plot_risk_comparison(self, data_1, data_2, y_1, y_2, plot_title='', title_1='', title_2='', title_3_cat = 'category',
-                              ylabel_1='', ylabel_2='', order_ascending=False, stat='percent', fmt='%.2f',fig_size=(15,10), padding=3.0):
-        '''This method plots to hprizontal bar charts, one below the other, for making comparisons'''
+    def plot_risk_comparison(self, data_1: pd.DataFrame, data_2: pd.DataFrame, y_1: str, y_2: str, plot_title: str='', title_1: str='',
+                             title_2: str='', title_3_cat: str = 'category', ylabel_1: str='', ylabel_2: str='',
+                             order_ascending: bool=False, stat: str='percent', fmt: str='%.2f',
+                             fig_size: tuple[float, float]=(15,10), padding: float=3.0):
+        '''This method plots to horizontal bar charts, one below the other, for making comparisons'''
 
         sns.set_style("darkgrid")
         fig, (ax1, ax2, ax3) = plt.subplots(3,1, figsize=fig_size)
@@ -300,25 +308,6 @@ class Plotter:
         ax2.set_ylabel(ylabel_2)
 
         #plot 3
-        #get percentage of category defaults
-        # categories = data_1[y_1].unique()
-        # percentages = {}
-
-        # for name in categories:
-        #     a = len(data_1[data_1[y_1]==name])
-        #     b = len(data_2[data_2[y_2]==name])
-        #     percent = (b/a) * 100
-        #     percentages[name] = percent
-
-        # descending = dict(Counter(percentages).most_common())
-        
-        # # for key, value in sorted(percentages.items(), key=lambda x: x[1]):
-        # #             sorted_dict[key] = value
-
-        # # percentages = dict(reversed(list(sorted_dict.items())))
-    
-        # sns.barplot(y=list(descending.keys()), x=list(descending.values()), orient = 'h', color= 'red',
-        #               ax=ax3)
         a = data_2[y_2].value_counts()
         b = data_1[y_1].value_counts()
 
@@ -334,8 +323,10 @@ class Plotter:
 
         plt.show()
 
-    def plot_charged_default_comparison(self, data_1, data_2, column, orientation='v', plot_title='', title_1='', title_2='',
-                                        label_1='', label_2='', fmt='%.2f', fig_size=(10,5), padding=3.0):
+    def plot_charged_default_comparison(self, data_1: pd.DataFrame, data_2: pd.DataFrame, column: str,
+                                        orientation: str='v', plot_title: str='', title_1: str='', title_2: str='',
+                                        label_1: str='', label_2: str='', fmt: str='%.2f', 
+                                        fig_size: tuple[float, float]=(10,5), padding: float=3.0):
         '''This method compares the distribtion of value counts as percentages of two dataframe columns'''
 
         if orientation == 'v':
@@ -385,19 +376,3 @@ class Plotter:
         plt.show()
 
 
-
-
-
-
-# fig, axes = plt.subplots(2,1, figsize=(15,10))
-# plt.title('Purpose (All loans)')
-# t=sns.countplot(data=df, y ='purpose', stat='percent', order=df['purpose'].value_counts(ascending=False).index, ax=axes[0])
-# t.set_title('Purpose (all loans)')
-# t.bar_label(t.containers[0], fmt='%.2f', label_type='edge')
-
-# g = sns.countplot(data=defaulted_subset, y ='purpose', stat='percent', color='orange', order=df['purpose'].value_counts(ascending=False).index,ax=axes[1])
-
-# g.set_title('Purpose (Defaulted loans)')
-# for label in g.containers:
-#     g.bar_label(label, fmt='%.2f', label_type='edge')
-# plt.show()
