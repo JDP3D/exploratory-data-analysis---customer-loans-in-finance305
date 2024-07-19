@@ -7,7 +7,7 @@ This project is for a data analysis course that I am currently taking. The goal 
        git clone https://github.com/JDP3D/exploratory-data-analysis---customer-loans-in-finance305.git
 
 2. Install dependencies:  
-The project was created with python 3.10.14.
+   The project was created with python 3.10.14.
 
         pip install the following libraries:
         
@@ -17,7 +17,6 @@ The project was created with python 3.10.14.
         pandas
         scipy
         seaborn
-        scipy
         sqlalchemy
         statsmodels
         yaml
@@ -30,7 +29,7 @@ Run the code in the jupyter notebooks milestone_03ipynb and milestone_04.ipynb. 
 ### Project file structure
 - db_utils: utilities for fetching and outputting the database. Running this script will download the database and write it to a local csv file named loan_payments.csv. Please note that you will not be able to access the remote database, csv copies have been provided.
   
-- milestone_02.ipynb: A jupyter notebook that can be used to chack the database (Project Task 3 of milestone 2)
+- milestone_02.ipynb: A jupyter notebook that can be used to check the database (Project Task 3 of milestone 2)
 
 - dataframe_info.py: utlities for extracting statistical other information of interest from a pandas dataframe dataframe .
 
@@ -40,7 +39,7 @@ Run the code in the jupyter notebooks milestone_03ipynb and milestone_04.ipynb. 
 
 - milestone_03.ipynb: A Jupyter notebooked used to explore, clean and transform the database.
 
-- milestone_04.ipynb: A Jupyter notebook used to analyse and visualise diferent aspects of the database.
+- milestone_04.ipynb: A Jupyter notebook used to analyse and visualise different aspects of the database.
 
 - loan_payments.csv: The raw uncleaned database.
 
